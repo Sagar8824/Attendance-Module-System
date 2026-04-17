@@ -1,0 +1,93 @@
+.App {
+  text-align: center;
+}
+
+/* ── Login page responsive ── */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.login-left-panel {
+  flex: 1;
+  min-width: 320px;
+  background: #1a1a2e;
+  padding: 60px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+
+.student-left-panel {
+  flex: 1;
+  min-width: 320px;
+  background: #0d3b66;
+  padding: 60px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+
+.login-right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 24px 16px;
+  min-height: 100vh;
+}
+
+.mobile-brand {
+  display: none;
+}
+
+/* ── Navbar responsive ── */
+.navbar-desktop {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar-hamburger {
+  display: none;
+}
+
+/* ── Mobile breakpoint ── */
+@media (max-width: 768px) {
+
+  /* Login — left panel hide karo */
+  .login-left-panel,
+  .student-left-panel {
+    display: none !important;
+  }
+
+  /* Mobile pe brand dikhao form ke upar */
+  .mobile-brand {
+    display: flex !important;
+  }
+
+  /* Login right panel full width */
+  .login-right-panel {
+    min-height: 100vh;
+    padding: 20px 16px;
+  }
+
+  /* Navbar — hamburger dikhao */
+  .navbar-desktop {
+    display: none;
+  }
+
+  .navbar-hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+  }
+}
