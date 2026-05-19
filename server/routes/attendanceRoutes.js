@@ -154,7 +154,6 @@ router.get("/dashboard", async (req, res) => {
     res.status(500).json(error);
   }
 });
-// ── Yeh route attendanceRoutes.js mein module.exports se PEHLE add karo ──
 
 // Attendance status update karo
 router.put("/update/:id", async (req, res) => {

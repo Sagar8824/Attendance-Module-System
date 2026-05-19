@@ -320,7 +320,7 @@ const s = {
   },
   inputErr: { borderColor: "#ef4444", background: "#fff5f5" },
   errText: { fontSize: 12, color: "#ef4444" },
-  deptGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 },
+  deptGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))", gap: 8 },
   deptBtn: {
     padding: "10px 0", borderRadius: 10, border: "1.5px solid #e2e8f0",
     background: "#f8fafc", fontSize: 14, fontWeight: 600,

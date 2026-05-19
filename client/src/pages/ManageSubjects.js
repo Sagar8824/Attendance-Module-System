@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const COURSES = ["BE", "ME", "BCA", "MCA"];
 const DEPARTMENTS = ["IT", "CS", "EC", "ME", "CE", "EE"];
 const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -9,23 +10,24 @@ function ManageSubjects() {
   const navigate = useNavigate();
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filterCourse, setFilterCourse] = useState("BE");
   const [filterDept, setFilterDept] = useState("IT");
   const [filterSem, setFilterSem] = useState(1);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", code: "", type: "Theory", semester: 1, department: "IT" });
+  const [form, setForm] = useState({ name: "", code: "", type: "Theory", course: "BE", semester: 1, department: "IT" });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
   const loadSubjects = () => {
     setLoading(true);
-    axios.get(`http://localhost:5000/subject/all?department=${filterDept}&semester=${filterSem}`)
+    axios.get(`http://localhost:5000/subject/all?course=${filterCourse}&department=${filterDept}&semester=${filterSem}`)
       .then((res) => setSubjects(res.data))
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadSubjects(); }, [filterDept, filterSem]);
+  useEffect(() => { loadSubjects(); }, [filterCourse, filterDept, filterSem]);
 
   const theorySubjects = subjects.filter((s) => s.type === "Theory");
   const practicalSubjects = subjects.filter((s) => s.type === "Practical");
@@ -45,7 +47,7 @@ function ManageSubjects() {
     try {
       await axios.post("http://localhost:5000/subject/add", form);
       setSuccessMsg(`"${form.name}" has been added successfully.`);
-      setForm({ name: "", code: "", type: "Theory", semester: filterSem, department: filterDept });
+      setForm({ name: "", code: "", type: "Theory", course: filterCourse, semester: filterSem, department: filterDept });
       setShowForm(false);
       loadSubjects();
       setTimeout(() => setSuccessMsg(""), 4000);
@@ -72,7 +74,7 @@ function ManageSubjects() {
           <h2 style={s.title}>Subject Management</h2>
           <p style={s.subtitle}>Manage theory and practical subjects by department and semester</p>
         </div>
-        <button style={s.addBtn} onClick={() => { setShowForm(!showForm); setForm({ ...form, semester: filterSem, department: filterDept }); setErrors({}); }}>
+        <button style={s.addBtn} onClick={() => { setShowForm(!showForm); setForm({ ...form, course: filterCourse, semester: filterSem, department: filterDept }); setErrors({}); }}>
           {showForm ? "✕ Cancel" : "+ Add Subject"}
         </button>
       </div>
@@ -108,11 +110,19 @@ function ManageSubjects() {
               </div>
               <div style={s.row2}>
                 <div style={{ ...s.field, flex: 1 }}>
+                  <label style={s.label}>Course *</label>
+                  <select style={s.input} value={form.course} onChange={(e) => setForm({ ...form, course: e.target.value })}>
+                    {COURSES.map((c) => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div style={{ ...s.field, flex: 1 }}>
                   <label style={s.label}>Department *</label>
                   <select style={s.input} value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })}>
                     {DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}
                   </select>
                 </div>
+              </div>
+              <div style={s.row2}>
                 <div style={{ ...s.field, flex: 1 }}>
                   <label style={s.label}>Semester *</label>
                   <select style={s.input} value={form.semester} onChange={(e) => setForm({ ...form, semester: Number(e.target.value) })}>
@@ -130,6 +140,14 @@ function ManageSubjects() {
 
       <div style={s.body}>
         <div style={s.filterCard}>
+          <div style={s.filterGroup}>
+            <div style={s.filterLabel}>Course</div>
+            <div style={s.chipRow}>
+              {COURSES.map((c) => (
+                <button key={c} style={{ ...s.chip, ...(filterCourse === c ? s.chipActive : {}) }} onClick={() => setFilterCourse(c)}>{c}</button>
+              ))}
+            </div>
+          </div>
           <div style={s.filterGroup}>
             <div style={s.filterLabel}>Department</div>
             <div style={s.chipRow}>
@@ -154,8 +172,8 @@ function ManageSubjects() {
           <div style={s.emptyWrap}>
             <div style={s.emptyIcon}>📚</div>
             <p style={s.emptyTitle}>No Subjects Found</p>
-            <p style={s.emptyText}>{filterDept} Department · Semester {filterSem} has no subjects configured.</p>
-            <button style={s.emptyAddBtn} onClick={() => { setForm({ ...form, department: filterDept, semester: filterSem }); setShowForm(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+            <p style={s.emptyText}>{filterCourse} · {filterDept} Department · Semester {filterSem} has no subjects configured.</p>
+            <button style={s.emptyAddBtn} onClick={() => { setForm({ ...form, course: filterCourse, department: filterDept, semester: filterSem }); setShowForm(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
               + Add First Subject
             </button>
           </div>

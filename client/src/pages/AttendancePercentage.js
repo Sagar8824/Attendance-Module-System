@@ -132,7 +132,7 @@ const s = {
   title: { fontSize: 22, fontWeight: 800, color: "#f8fafc", margin: "0 0 4px" },
   subtitle: { fontSize: 13, color: "#64748b", margin: 0 },
   body: { maxWidth: 800, margin: "0 auto", padding: "24px 24px 0" },
-  statsRow: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 16 },
+  statsRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 16 },
   statCard: { borderRadius: 14, padding: "18px 20px" },
   statValue: { fontSize: 30, fontWeight: 800, lineHeight: 1, marginBottom: 4 },
   statLabel: { fontSize: 13, fontWeight: 600 },

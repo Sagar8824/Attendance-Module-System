@@ -2,15 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const COURSES = ["BE", "ME", "BCA", "MCA"];
 const DEPARTMENTS = ["IT", "CS", "EC", "ME", "CE", "EE"];
 const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
+const GROUPS = ["A1", "A2", "A3", "B1", "B2"];
 
 function SwipeAttendance() {
   const navigate = useNavigate();
   const teacherDept = localStorage.getItem("department") || "IT";
   const [step, setStep] = useState(1);
+  const [course, setCourse] = useState("BE");
   const [department, setDepartment] = useState(teacherDept);
   const [semester, setSemester] = useState(1);
+  const [group, setGroup] = useState("A1");
   const [subjectType, setSubjectType] = useState("Theory");
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -32,19 +36,19 @@ function SwipeAttendance() {
   useEffect(() => {
     setLoadingSubjects(true);
     setSelectedSubject(null);
-    axios.get(`http://localhost:5000/subject/all?department=${department}&semester=${semester}&type=${subjectType}`)
+    axios.get(`http://localhost:5000/subject/all?course=${course}&department=${department}&semester=${semester}&type=${subjectType}`)
       .then((res) => setSubjects(res.data))
       .catch((err) => console.log(err))
       .finally(() => setLoadingSubjects(false));
-  }, [department, semester, subjectType]);
+  }, [course, department, semester, subjectType]);
 
   const startAttendance = async () => {
     if (!selectedSubject) { alert("Please select a subject to continue"); return; }
     setLoadingStudents(true);
     try {
-      const res = await axios.get(`http://localhost:5000/student/all?department=${department}&semester=${semester}`);
+      const res = await axios.get(`http://localhost:5000/student/all?course=${course}&department=${department}&semester=${semester}&group=${group}`);
       const sorted = res.data.sort((a, b) => a.rollNumber.localeCompare(b.rollNumber, undefined, { numeric: true }));
-      if (sorted.length === 0) { alert(`No students found for ${department} Semester ${semester}`); return; }
+      if (sorted.length === 0) { alert(`No students found for ${course} ${department} Sem ${semester} Group ${group}`); return; }
       setStudents(sorted);
       setCurrentIndex(0);
       setAttendanceLog([]);
@@ -119,6 +123,14 @@ function SwipeAttendance() {
             <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} style={s.dateInput} />
           </div>
           <div style={s.setupCard}>
+            <div style={s.setupCardTitle}>Course</div>
+            <div style={s.chipRow}>
+              {COURSES.map((c) => (
+                <button key={c} style={{ ...s.chip, ...(course === c ? s.chipActive : {}) }} onClick={() => setCourse(c)}>{c}</button>
+              ))}
+            </div>
+          </div>
+          <div style={s.setupCard}>
             <div style={s.setupCardTitle}>Department <span style={s.autoTag}>Auto-selected</span></div>
             <div style={s.chipRow}>
               {DEPARTMENTS.map((d) => (
@@ -131,6 +143,14 @@ function SwipeAttendance() {
             <div style={s.chipRow}>
               {SEMESTERS.map((n) => (
                 <button key={n} style={{ ...s.chip, ...(semester === n ? s.chipActive : {}) }} onClick={() => setSemester(n)}>Sem {n}</button>
+              ))}
+            </div>
+          </div>
+          <div style={s.setupCard}>
+            <div style={s.setupCardTitle}>Group</div>
+            <div style={s.chipRow}>
+              {GROUPS.map((g) => (
+                <button key={g} style={{ ...s.chip, ...(group === g ? s.chipActive : {}) }} onClick={() => setGroup(g)}>{g}</button>
               ))}
             </div>
           </div>
@@ -201,8 +221,8 @@ function SwipeAttendance() {
   }
 
   const rotation = dragX / 15;
-  const presentOpacity = Math.min(Math.max(dragX / 80, 0), 1);
-  const absentOpacity = Math.min(Math.max(-dragX / 80, 0), 1);
+  const presentOpacity = Math.min(Math.max(-dragX / 80, 0), 1); // LEFT swipe = Present ✓
+  const absentOpacity  = Math.min(Math.max( dragX / 80, 0), 1); // RIGHT swipe = Absent ✓
   const cardStyle = swipeAnim === "left"
     ? { ...s.card, transform: "translateX(-130%) rotate(-20deg)", opacity: 0, transition: "all 0.3s ease" }
     : swipeAnim === "right"
@@ -316,7 +336,7 @@ const s = {
   photoInitial: { fontSize: 72, fontWeight: 800, color: "#cbd5e1", userSelect: "none" },
   cardInfo: { padding: "18px 20px 20px" },
   studentName: { fontSize: 20, fontWeight: 800, margin: "0 0 14px", color: "#0f172a" },
-  infoGrid: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 },
+  infoGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))", gap: 12 },
   infoItem: { display: "flex", flexDirection: "column", gap: 4 },
   infoLabel: { fontSize: 10, color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 },
   infoValue: { fontSize: 13, fontWeight: 700, color: "#1e293b" },

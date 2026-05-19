@@ -37,7 +37,7 @@ const upload = multer({ storage, fileFilter, limits: { fileSize: 2 * 1024 * 1024
 // ── Add Student (with optional photo) ──
 router.post("/add", upload.single("photo"), async (req, res) => {
   try {
-    const { name, rollNumber, department, semester, password } = req.body;
+    const { name, rollNumber, course, department, semester, group, password } = req.body;
 
     // Duplicate roll number check
     const existing = await Student.findOne({ rollNumber });
@@ -51,8 +51,10 @@ router.post("/add", upload.single("photo"), async (req, res) => {
     const student = new Student({
       name,
       rollNumber,
+      course,
       department,
       semester,
+      group,
       password: hashedPassword,
       photo: req.file ? req.file.filename : null, // ✅ photo filename save karo
     });
@@ -68,8 +70,10 @@ router.post("/add", upload.single("photo"), async (req, res) => {
 router.get("/all", async (req, res) => {
   try {
     const filter = {};
+    if (req.query.course) filter.course = req.query.course;
     if (req.query.department) filter.department = req.query.department;
     if (req.query.semester) filter.semester = Number(req.query.semester);
+    if (req.query.group) filter.group = req.query.group;
     const students = await Student.find(filter).select("-password");
     res.json(students);
   } catch (error) {
@@ -77,8 +81,10 @@ router.get("/all", async (req, res) => {
   }
 });
 
+const excelUpload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+
 // ── Upload Students via Excel ──
-router.post("/upload", upload.single("file"), async (req, res) => {
+router.post("/upload", excelUpload.single("file"), async (req, res) => {
   try {
     const workbook = XLSX.readFile(req.file.path);
     const sheetName = workbook.SheetNames[0];
@@ -91,8 +97,10 @@ router.post("/upload", upload.single("file"), async (req, res) => {
         return {
           name: item.Name || item.name,
           rollNumber: item["Roll No"] || item.rollNumber,
-          department: item.Department || "IT",
-          semester: item.Semester || 6,
+          course: item.Course || item.course || "BE",
+          department: item.Department || item.department || item["department "] || "IT",
+          semester: item.Semester || item.semester || 6,
+          group: item.Group || item.group || "A1",
           password: hashedPassword,
           photo: null,
         };

@@ -110,7 +110,7 @@ const s = {
   headerSub: { fontSize: 12, color: "#64748b", marginTop: 2 },
   excelBtn: { background: "#166534", color: "#fff", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer" },
   body: { maxWidth: 560, margin: "0 auto", padding: "24px 16px 0" },
-  statsRow: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 },
+  statsRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 12, marginBottom: 16 },
   statCard: { borderRadius: 14, padding: "16px 12px", textAlign: "center" },
   statValue: { fontSize: 26, fontWeight: 800, lineHeight: 1, marginBottom: 4 },
   statLabel: { fontSize: 12, fontWeight: 600 },

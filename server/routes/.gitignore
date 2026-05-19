@@ -1,0 +1,6 @@
+node_modules/
+Project_Report/node_modules/
+.env
+server/.env
+server/uploads/
+*.xlsx

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const COURSES = ["BE", "ME", "BCA", "MCA"];
 const DEPARTMENTS = ["IT", "CS", "EC", "ME", "CE", "EE"];
+const GROUPS = ["A1", "A2", "A3", "B1", "B2"];
 
 function AddStudent() {
   const navigate = useNavigate();
-  const [student, setStudent] = useState({ name: "", rollNumber: "", department: "", semester: "", password: "" });
+  const [student, setStudent] = useState({ name: "", rollNumber: "", course: "BE", department: "", semester: "", group: "A1", password: "" });
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -32,8 +34,10 @@ function AddStudent() {
     const e = {};
     if (!student.name.trim()) e.name = "Full name is required";
     if (!student.rollNumber.trim()) e.rollNumber = "Roll number is required";
+    if (!student.course) e.course = "Course is required";
     if (!student.department) e.department = "Department is required";
     if (!student.semester) e.semester = "Semester is required";
+    if (!student.group) e.group = "Group is required";
     if (!student.password.trim()) e.password = "Password is required";
     else if (student.password.length < 4) e.password = "Password must be at least 4 characters";
     return e;
@@ -52,7 +56,7 @@ function AddStudent() {
         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setSuccess(true);
-      setStudent({ name: "", rollNumber: "", department: "", semester: "", password: "" });
+      setStudent({ name: "", rollNumber: "", course: "BE", department: "", semester: "", group: "A1", password: "" });
       setPhoto(null);
       setPreview(null);
       setTimeout(() => setSuccess(false), 4000);
@@ -118,23 +122,42 @@ function AddStudent() {
               </div>
             </div>
 
-            <div style={s.field}>
-              <label style={s.label}>Department *</label>
-              <div style={s.deptGrid}>
-                {DEPARTMENTS.map((d) => (
-                  <button key={d} type="button" style={{ ...s.deptBtn, ...(student.department === d ? s.deptBtnActive : {}) }} onClick={() => { setStudent({ ...student, department: d }); setErrors({ ...errors, department: "" }); }}>{d}</button>
-                ))}
+            <div style={s.row2}>
+              <div style={{ ...s.field, flex: 1 }}>
+                <label style={s.label}>Course *</label>
+                <select style={{ ...s.input, ...(errors.course ? s.inputErr : {}) }} name="course" value={student.course} onChange={handleChange}>
+                  {COURSES.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+                {errors.course && <span style={s.errText}>{errors.course}</span>}
               </div>
-              {errors.department && <span style={s.errText}>{errors.department}</span>}
+
+              <div style={{ ...s.field, flex: 1 }}>
+                <label style={s.label}>Department *</label>
+                <select style={{ ...s.input, ...(errors.department ? s.inputErr : {}) }} name="department" value={student.department} onChange={handleChange}>
+                  <option value="">Select department</option>
+                  {DEPARTMENTS.map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
+                {errors.department && <span style={s.errText}>{errors.department}</span>}
+              </div>
             </div>
 
-            <div style={s.field}>
-              <label style={s.label}>Semester *</label>
-              <select style={{ ...s.input, ...(errors.semester ? s.inputErr : {}) }} name="semester" value={student.semester} onChange={handleChange}>
-                <option value="">Select semester</option>
-                {[1,2,3,4,5,6,7,8].map((n) => <option key={n} value={n}>Semester {n}</option>)}
-              </select>
-              {errors.semester && <span style={s.errText}>{errors.semester}</span>}
+            <div style={s.row2}>
+              <div style={{ ...s.field, flex: 1 }}>
+                <label style={s.label}>Semester *</label>
+                <select style={{ ...s.input, ...(errors.semester ? s.inputErr : {}) }} name="semester" value={student.semester} onChange={handleChange}>
+                  <option value="">Select semester</option>
+                  {[1,2,3,4,5,6,7,8].map((n) => <option key={n} value={n}>Semester {n}</option>)}
+                </select>
+                {errors.semester && <span style={s.errText}>{errors.semester}</span>}
+              </div>
+
+              <div style={{ ...s.field, flex: 1 }}>
+                <label style={s.label}>Group *</label>
+                <select style={{ ...s.input, ...(errors.group ? s.inputErr : {}) }} name="group" value={student.group} onChange={handleChange}>
+                  {GROUPS.map((g) => <option key={g} value={g}>{g}</option>)}
+                </select>
+                {errors.group && <span style={s.errText}>{errors.group}</span>}
+              </div>
             </div>
 
             <div style={s.field}>
@@ -178,7 +201,7 @@ const s = {
   input: { padding: "12px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 14, color: "#0f172a", outline: "none", background: "#f8fafc", width: "100%", boxSizing: "border-box" },
   inputErr: { borderColor: "#ef4444", background: "#fff5f5" },
   errText: { fontSize: 12, color: "#ef4444" },
-  deptGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 },
+  deptGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))", gap: 8 },
   deptBtn: { padding: "10px 0", borderRadius: 10, border: "1.5px solid #e2e8f0", background: "#f8fafc", fontSize: 14, fontWeight: 600, cursor: "pointer", color: "#475569" },
   deptBtnActive: { background: "#0f172a", color: "#fff", border: "1.5px solid #0f172a" },
   submitBtn: { width: "100%", padding: "14px 0", background: "#0f172a", color: "#fff", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer" },

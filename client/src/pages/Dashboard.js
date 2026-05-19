@@ -143,7 +143,7 @@ const s = {
   body: { padding: "0 24px 40px", maxWidth: 900, margin: "0 auto", width: "100%" },
 
   statsGrid: {
-    display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+    display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
     gap: 16, marginTop: -24, marginBottom: 20,
   },
   statCard: {

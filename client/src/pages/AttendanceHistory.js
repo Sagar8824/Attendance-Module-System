@@ -184,7 +184,7 @@ const s = {
   editHint: { background: "#eff6ff", color: "#1d4ed8", padding: "10px 32px", fontSize: 13, fontWeight: 500, display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid #bfdbfe" },
   editHintIcon: { fontSize: 14 },
   body: { maxWidth: 800, margin: "0 auto", padding: "24px 24px 0" },
-  statsRow: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 20 },
+  statsRow: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 20 },
   statCard: { borderRadius: 14, padding: "18px 20px", border: "1px solid" },
   statValue: { fontSize: 32, fontWeight: 800, lineHeight: 1, marginBottom: 4 },
   statLabel: { fontSize: 13, fontWeight: 600 },
